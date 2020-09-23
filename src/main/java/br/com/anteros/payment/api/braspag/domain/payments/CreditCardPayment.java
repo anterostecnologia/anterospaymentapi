@@ -15,7 +15,7 @@ public class CreditCardPayment extends Payment {
 	
 	public CreditCardPayment()
 	{
-		this.setType("CreditCard");
+		
 	}
 	
 	@JsonProperty("ServiceTaxAmount")

@@ -23,86 +23,37 @@ import br.com.anteros.payment.api.braspag.service.PaymentService;
 @Scope("prototype")
 public class PaymentServiceImpl extends AbstractIntegrationService implements PaymentService {
 
-
-	private RestTemplate restTemplate = new RestTemplate();
-	
 	@Override
-	public Sale createSale(MerchantAuthentication merchantAuthentication, Sale sale) {		
-        HttpEntity<Sale> saleHttpEntity =
-                new HttpEntity<>(sale, getHeaders(merchantAuthentication));       
-        ResponseEntity<Sale> result = restTemplate.exchange(
-                getPaymentAuthorizationURL(),
-                HttpMethod.POST,
-                saleHttpEntity,
-                Sale.class
-        );
-        return result.getBody();
+	public Sale createSale(MerchantAuthentication merchantAuthentication, Sale sale) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public CaptureResponse capture(String paymentId, MerchantAuthentication merchantAuthentication,
 			CaptureRequest captureRequest) {
-		HttpEntity<?> captureHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<CaptureResponse> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/"+paymentId+"/?amount={amount}&serviceTaxAmount={serviceTaxAmount}" ,
-                HttpMethod.PUT,
-                captureHttpEntity,
-                CaptureResponse.class,
-                captureRequest.getAmount(),
-                captureRequest.getServiceTaxAmount()
-        );
-
-        return exchange.getBody();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public VoidResponse Void(String paymentId, MerchantAuthentication merchantAuthentication, VoidRequest voidRequest) {
-		HttpEntity<?> voidHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<VoidResponse> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/{paymentId}/void",
-                HttpMethod.PUT,
-                voidHttpEntity,
-                VoidResponse.class,
-                paymentId,
-                voidRequest.getAmount()
-        );
-
-        return exchange.getBody();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public Sale get(String paymentId, MerchantAuthentication merchantAuthentication) {
-		HttpEntity<Sale> voidHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<Sale> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/{paymentId}" ,
-                HttpMethod.PUT,
-                voidHttpEntity,
-                Sale.class,
-                paymentId
-        );
-
-        return exchange.getBody();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public Sale createSale(MerchantAuthentication merchantAuthentication, Sale sale, Map<String, String> headers) {
-		HttpEntity<Sale> voidHttpEntity =
-                new HttpEntity<Sale>(getHeaders(merchantAuthentication, headers));
-
-        ResponseEntity<Sale> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL() ,
-                HttpMethod.PUT,
-                voidHttpEntity,
-                Sale.class
-        );
-
-        return exchange.getBody();
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+
 
 }

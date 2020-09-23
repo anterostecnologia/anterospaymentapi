@@ -1,108 +1,91 @@
 package br.com.anteros.payment.api.braspag.service.impl;
 
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import br.com.anteros.payment.api.braspag.domain.CaptureRequest;
-import br.com.anteros.payment.api.braspag.domain.CaptureResponse;
-import br.com.anteros.payment.api.braspag.domain.MerchantAuthentication;
 import br.com.anteros.payment.api.braspag.domain.Sale;
-import br.com.anteros.payment.api.braspag.domain.VoidRequest;
-import br.com.anteros.payment.api.braspag.domain.VoidResponse;
+import br.com.anteros.payment.api.braspag.domain.payments.LockPayment;
 import br.com.anteros.payment.api.braspag.service.AbstractIntegrationService;
-import br.com.anteros.payment.api.braspag.service.PaymentService;
+import br.com.anteros.payment.api.braspag.service.PaymentSplitService;
+import br.com.anteros.payment.api.common.AnterosOAuth2RestTemplate;
 
-
-@Service("paymentService")
+@Service("paymentSplitService")
 @Scope("prototype")
-public class PaymentSplitServiceImpl extends AbstractIntegrationService implements PaymentService {
+public class PaymentSplitServiceImpl extends AbstractIntegrationService implements PaymentSplitService {
 
+	public static final String SETTLEMENTS = "/settlements";
+	public static final String API_TRANSACTIONS = "/api/transactions/";
+	public static final String AUTHORIZATION = "authorization";
+	public static final String BEARER = "Bearer ";
+	@Autowired
+	@Lazy
+	private AnterosOAuth2RestTemplate restTemplateBraspag;
 
-	private RestTemplate restTemplate = new RestTemplate();
-	
 	@Override
-	public Sale createSale(MerchantAuthentication merchantAuthentication, Sale sale) {		
-        HttpEntity<Sale> saleHttpEntity =
-                new HttpEntity<>(sale, getHeaders(merchantAuthentication));       
-        ResponseEntity<Sale> result = restTemplate.exchange(
-                getPaymentAuthorizationURL(),
-                HttpMethod.POST,
-                saleHttpEntity,
-                Sale.class
-        );
-        return result.getBody();
+	public Sale createSale(Sale sale) {				
+		String url = AbstractIntegrationService.getApiCieloEcommerce(restTemplateBraspag.getTpEnviromment())+"/1/sales/";		
+		OAuth2AccessToken accessToken = restTemplateBraspag.getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(AUTHORIZATION, BEARER + accessToken.getValue());		
+		HttpEntity<Sale> saleHttpEntity = new HttpEntity<>(sale, headers);
+		ResponseEntity<Sale> result = restTemplateBraspag.exchange(url, HttpMethod.POST,
+				saleHttpEntity, Sale.class);
+		return result.getBody();
 	}
 
 	@Override
-	public CaptureResponse capture(String paymentId, MerchantAuthentication merchantAuthentication,
-			CaptureRequest captureRequest) {
-		HttpEntity<?> captureHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<CaptureResponse> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/"+paymentId+"/?amount={amount}&serviceTaxAmount={serviceTaxAmount}" ,
-                HttpMethod.PUT,
-                captureHttpEntity,
-                CaptureResponse.class,
-                captureRequest.getAmount(),
-                captureRequest.getServiceTaxAmount()
-        );
-
-        return exchange.getBody();
+	public void lockPayment(String paymentId, String subordinateMerchantId) {
+		String url = AbstractIntegrationService.getApiSplit(restTemplateBraspag.getTpEnviromment())+API_TRANSACTIONS+paymentId+SETTLEMENTS;		
+		OAuth2AccessToken accessToken = restTemplateBraspag.getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(AUTHORIZATION, BEARER + accessToken.getValue());			
+		LockPayment lockPayment = new LockPayment();
+		lockPayment.setSubordinateMerchantId(subordinateMerchantId);
+		lockPayment.setLocked(true);		
+		HttpEntity<LockPayment> saleHttpEntity = new HttpEntity<>(lockPayment, headers);
+		restTemplateBraspag.exchange(url, HttpMethod.PUT,
+				saleHttpEntity, Void.class);	
 	}
 
 	@Override
-	public VoidResponse Void(String paymentId, MerchantAuthentication merchantAuthentication, VoidRequest voidRequest) {
-		HttpEntity<?> voidHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<VoidResponse> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/{paymentId}/void",
-                HttpMethod.PUT,
-                voidHttpEntity,
-                VoidResponse.class,
-                paymentId,
-                voidRequest.getAmount()
-        );
-
-        return exchange.getBody();
+	public void unlockPayment(String paymentId, String subordinateMerchantId) {
+		String url = AbstractIntegrationService.getApiSplit(restTemplateBraspag.getTpEnviromment())+API_TRANSACTIONS+paymentId+SETTLEMENTS;		
+		OAuth2AccessToken accessToken = restTemplateBraspag.getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(AUTHORIZATION, BEARER + accessToken.getValue());			
+		LockPayment lockPayment = new LockPayment();
+		lockPayment.setSubordinateMerchantId(subordinateMerchantId);
+		lockPayment.setLocked(false);
+		
+		HttpEntity<LockPayment> saleHttpEntity = new HttpEntity<>(lockPayment, headers);
+		restTemplateBraspag.exchange(url, HttpMethod.PUT,
+				saleHttpEntity, Void.class);
 	}
 
 	@Override
-	public Sale get(String paymentId, MerchantAuthentication merchantAuthentication) {
-		HttpEntity<Sale> voidHttpEntity =
-                new HttpEntity<>(getHeaders(merchantAuthentication));
-
-        ResponseEntity<Sale> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL()+"/{paymentId}" ,
-                HttpMethod.PUT,
-                voidHttpEntity,
-                Sale.class,
-                paymentId
-        );
-
-        return exchange.getBody();
+	public Sale get(String paymentId) {
+		String url = AbstractIntegrationService.getApiCieloECommerceSearch(restTemplateBraspag.getTpEnviromment())+"/1/sales/"+paymentId;		
+		OAuth2AccessToken accessToken = restTemplateBraspag.getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(AUTHORIZATION, BEARER + accessToken.getValue());		
+		HttpEntity<Sale> saleHttpEntity = new HttpEntity<>(headers);
+		ResponseEntity<Sale> result = restTemplateBraspag.exchange(url, HttpMethod.GET,
+				saleHttpEntity, Sale.class);
+		return result.getBody();
 	}
 
-	@Override
-	public Sale createSale(MerchantAuthentication merchantAuthentication, Sale sale, Map<String, String> headers) {
-		HttpEntity<Sale> voidHttpEntity =
-                new HttpEntity<Sale>(getHeaders(merchantAuthentication, headers));
 
-        ResponseEntity<Sale> exchange = restTemplate.exchange(
-                getPaymentAuthorizationURL() ,
-                HttpMethod.PUT,
-                voidHttpEntity,
-                Sale.class
-        );
-
-        return exchange.getBody();
-	}
 
 }

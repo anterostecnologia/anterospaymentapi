@@ -3,24 +3,42 @@ package br.com.anteros.payment.api.braspag.service;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import br.com.anteros.payment.api.braspag.domain.MerchantAuthentication;
+import br.com.anteros.payment.api.common.TypeOfEnviromment;
 
 public class AbstractIntegrationService {
 	
-    @Value("${braspag.integration.url}")
-    private String braspagURL="https://apisandbox.braspag.com.br";
+    //Sandbox
+
+    //API Cielo E-Commerce: 
+    public static final String sandBoxApiCieloEcommerce = "https://apisandbox.cieloecommerce.cielo.com.br";
+    //API Cielo E-Commerce (Consultas): 
+    public static final String sandBoxApiCieloECommerceSearch = "https://apiquerysandbox.cieloecommerce.cielo.com.br";
+    //API Split: 
+    public static final String sandBoxApiSplit = "https://splitsandbox.braspag.com.br";
+    //Braspag OAUTH2 Server: 
+    public static final String sandBoxOAuth2Server = "https://authsandbox.braspag.com.br";
+    //Sellers
+    public static final String sandBoxSellers = "https://splitonboardingsandbox.braspag.com.br";
     
-    @Value("${braspag.sellers.integration.url}")
-    private String braspagSellersURL="https://splitonboardingsandbox.braspag.com.br";
-    
+    		
+    //Produção
+
+    //API Cielo E-Commerce: 
+    public static final String productionApiCieloECommerce = "https://api.cieloecommerce.cielo.com.br";
+    //API Cielo E-Commerce (Consultas): 
+    public static final String productionApiCieloECommerceSearch = "https://apiquery.cieloecommerce.cielo.com.br";
+    //API Split: 
+    public static final String productionApiSplit = "https://split.braspag.com.br";
+    //Braspag OAUTH2 Server: 
+    public static final String productionOAuth2Server = "https://auth.braspag.com.br";
+    //Sellers
+    public static final String productionSellers = "https://splitonboarding.braspag.com.br";
     
 
-    private static final String PAYMENT_AUTHORIZATION_URI = "/v2/sales";
-    private static final String SELLERS_URI = "/api/subordinates";
 
 
     public HttpHeaders getHeaders(MerchantAuthentication merchantAuthentication) {
@@ -46,13 +64,41 @@ public class AbstractIntegrationService {
 
         return  result;
     }
-
-    public String getPaymentAuthorizationURL() {
-        return braspagURL + PAYMENT_AUTHORIZATION_URI;
+    
+    
+    public static String getApiCieloEcommerce(TypeOfEnviromment tpEnvironment) {
+    	if (tpEnvironment.equals(TypeOfEnviromment.TEST)) {
+    		return sandBoxApiCieloEcommerce;
+    	}
+    	return productionApiCieloECommerce;
     }
     
-    public String getSellersApiURL() {
-        return braspagSellersURL + SELLERS_URI;
+    public static String getApiCieloECommerceSearch(TypeOfEnviromment tpEnvironment) {
+    	if (tpEnvironment.equals(TypeOfEnviromment.TEST)) {
+    		return sandBoxApiCieloECommerceSearch;
+    	}
+    	return productionApiCieloECommerceSearch;
     }
+    
+    public static String getApiSplit(TypeOfEnviromment tpEnvironment) {
+    	if (tpEnvironment.equals(TypeOfEnviromment.TEST)) {
+    		return sandBoxApiSplit;
+    	}
+    	return productionApiSplit;
+    }
+    
+    public static String getOAuth2Server(TypeOfEnviromment tpEnvironment) {
+    	if (tpEnvironment.equals(TypeOfEnviromment.TEST)) {
+    		return sandBoxOAuth2Server;
+    	}
+    	return productionOAuth2Server;
+    }
+    
+    public static String getSellers(TypeOfEnviromment tpEnvironment) {
+    	if (tpEnvironment.equals(TypeOfEnviromment.TEST)) {
+    		return sandBoxSellers;
+    	}
+    	return productionSellers;
+    }    
 
 }

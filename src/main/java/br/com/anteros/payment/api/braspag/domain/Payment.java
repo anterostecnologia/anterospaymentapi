@@ -1,5 +1,6 @@
 package br.com.anteros.payment.api.braspag.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,15 +19,13 @@ import br.com.anteros.payment.api.braspag.domain.payments.DebitCardPayment;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "Type")
 @JsonSubTypes(value = { @Type(value = BoletoPayment.class, name = "Boleto"),
+		@Type(value = BoletoPayment.class, name = "SplittedBoleto"),
 		@Type(value = CreditCardPayment.class, name = "CreditCard"),
 		@Type(value = DebitCardPayment.class, name = "DebitCard") })
 public abstract class Payment {
 
 	@JsonProperty("PaymentId")
 	private String paymentId;
-
-	@JsonProperty("Type")
-	private String type;
 
 	@JsonProperty("Amount")
 	private long amount;
@@ -80,6 +79,9 @@ public abstract class Payment {
 
 	@JsonProperty("Links")
 	private List<Link> links;
+	
+	@JsonProperty("SplitPayments")
+	private List<SplitPayment> splitPayments;
 
 	public String getPaymentId() {
 		return paymentId;
@@ -221,27 +223,30 @@ public abstract class Payment {
 		this.links = links;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public void setStatus(int status) {
 		this.status = status;
 	}
 
 	@Override
 	public String toString() {
-		return "Payment [paymentId=" + paymentId + ", type=" + type + ", amount=" + amount + ", receivedDate="
+		return "Payment [paymentId=" + paymentId + ", amount=" + amount + ", receivedDate="
 				+ receivedDate + ", capturedAmount=" + capturedAmount + ", voidedAmount=" + voidedAmount + ", currency="
 				+ currency + ", country=" + country + ", provider=" + provider + ", credentials=" + credentials
 				+ ", returnUrl=" + returnUrl + ", extraDataCollection=" + extraDataCollection + ", reasonCode="
 				+ reasonCode + ", reasonMessage=" + reasonMessage + ", providerReturnCode=" + providerReturnCode
 				+ ", providerReturnMessage=" + providerReturnMessage + ", status=" + status + ", recurrentPayment="
 				+ recurrentPayment + ", links=" + links + "]";
+	}
+
+	public List<SplitPayment> getSplitPayments() {
+		if (splitPayments==null) {
+			splitPayments = new ArrayList<SplitPayment>();
+		}
+		return splitPayments;
+	}
+
+	public void setSplitPayments(List<SplitPayment> splitPayments) {
+		this.splitPayments = splitPayments;
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.anteros.payment.api.braspag.domain.subordinate;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +11,7 @@ public class Notification {
 	private String url;
 
 	@JsonProperty("Headers")
-	private Map<String,String> headers;
+	private List<HeaderValue> headers;
 
 	public String getUrl() {
 		return url;
@@ -20,11 +21,12 @@ public class Notification {
 		this.url = url;
 	}
 
-	public Map<String, String> getHeaders() {
+	public List<HeaderValue> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(List<HeaderValue> headers) {
 		this.headers = headers;
 	}
+
 }

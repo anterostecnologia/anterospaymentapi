@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.com.anteros.payment.api.braspag.domain.Payment;
 
-@JsonTypeName("Boleto")
-public class BoletoPayment extends Payment {	
+@JsonTypeName("SplittedBoleto")
+public class SplittedBoletoPayment extends Payment {	
 
 	@JsonProperty("Instructions")
 	private String instructions;
@@ -47,7 +47,7 @@ public class BoletoPayment extends Payment {
 	@JsonProperty("Status")
 	private int status;
 	
-	public BoletoPayment() {
+	public SplittedBoletoPayment() {
 		
 	}
 	

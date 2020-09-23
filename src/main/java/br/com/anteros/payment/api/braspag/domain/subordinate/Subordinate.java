@@ -57,6 +57,9 @@ public class Subordinate {
 	
 	@JsonProperty("analysis")
 	private Analysis Analysis;
+	
+	@JsonProperty("Address")
+	private SubordinateAddress address;
 
 	public String getCorporateName() {
 		return corporateName;
@@ -187,6 +190,22 @@ public class Subordinate {
 
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	public Analysis getAnalysis() {
+		return Analysis;
+	}
+
+	public void setAnalysis(Analysis analysis) {
+		Analysis = analysis;
+	}
+
+	public SubordinateAddress getAddress() {
+		return address;
+	}
+
+	public void setAddress(SubordinateAddress address) {
+		this.address = address;
 	}
 
 }

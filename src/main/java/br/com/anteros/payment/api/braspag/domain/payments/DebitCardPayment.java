@@ -11,7 +11,7 @@ import br.com.anteros.payment.api.braspag.domain.Wallet;
 public class DebitCardPayment extends Payment {
 
 	private DebitCardPayment() {
-		this.setType("DebitCard");
+		
 	}
 
 	@JsonProperty("Authenticate")

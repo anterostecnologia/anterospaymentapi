@@ -3,6 +3,12 @@ package br.com.anteros.payment.api.braspag.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Sale {
+	@JsonProperty("MerchantId")
+	private String merchantId;
+	
+	@JsonProperty("MerchantKey")
+	private String merchantKey;	
+	
 	@JsonProperty("MerchantOrderId")
 	private String merchantOrderId;
 	
@@ -12,6 +18,7 @@ public class Sale {
 	@JsonProperty("Payment")
 	private Payment payment;
 	
+		
 	public Sale() {
 		
 	}
@@ -61,6 +68,22 @@ public class Sale {
 	@Override
 	public String toString() {
 		return "Sale [merchantOrderId=" + merchantOrderId + ", customer=" + customer + ", payment=" + payment + "]";
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getMerchantKey() {
+		return merchantKey;
+	}
+
+	public void setMerchantKey(String merchantKey) {
+		this.merchantKey = merchantKey;
 	}
 	
 	
