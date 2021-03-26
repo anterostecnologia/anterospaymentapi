@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-Payment-Api</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 
 	<name>Anteros Payment Integration Api</name>
 	<description>
-         Anteros Payment Integration Api for Java.
-    </description>
+		Anteros Payment Integration Api for Java.
+	</description>
 	<organization>
 		<name>Anteros Tecnologia</name>
 		<url>http://www.anteros.com.br</url>
@@ -107,7 +107,32 @@
 			<version>[2.0.24,)</version>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 	<profiles>
 		<profile>
 			<id>maven-central</id>
